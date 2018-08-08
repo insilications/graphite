@@ -4,7 +4,7 @@
 #
 Name     : graphite
 Version  : 1.3.11
-Release  : 2
+Release  : 3
 URL      : https://github.com/silnrsi/graphite/releases/download/1.3.11/graphite2-1.3.11.tgz
 Source0  : https://github.com/silnrsi/graphite/releases/download/1.3.11/graphite2-1.3.11.tgz
 Summary  : "Interface to SIL's Graphite2 rendering engine"
@@ -17,6 +17,11 @@ Requires: graphite-data
 BuildRequires : buildreq-cmake
 BuildRequires : buildreq-cpan
 BuildRequires : freetype-dev
+BuildRequires : gcc-dev32
+BuildRequires : gcc-libgcc32
+BuildRequires : gcc-libstdc++32
+BuildRequires : glibc-dev32
+BuildRequires : glibc-libc32
 
 %description
 *** Linux MonoDevelop build instructions. ***
@@ -52,6 +57,18 @@ Provides: graphite-devel
 dev components for the graphite package.
 
 
+%package dev32
+Summary: dev32 components for the graphite package.
+Group: Default
+Requires: graphite-lib32
+Requires: graphite-bin
+Requires: graphite-data
+Requires: graphite-dev
+
+%description dev32
+dev32 components for the graphite package.
+
+
 %package lib
 Summary: lib components for the graphite package.
 Group: Libraries
@@ -60,6 +77,16 @@ Requires: graphite-license
 
 %description lib
 lib components for the graphite package.
+
+
+%package lib32
+Summary: lib32 components for the graphite package.
+Group: Default
+Requires: graphite-data
+Requires: graphite-license
+
+%description lib32
+lib32 components for the graphite package.
 
 
 %package license
@@ -72,17 +99,29 @@ license components for the graphite package.
 
 %prep
 %setup -q -n graphite2-1.3.11
+pushd ..
+cp -a graphite2-1.3.11 build32
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1533749623
+export SOURCE_DATE_EPOCH=1533750572
 mkdir clr-build
 pushd clr-build
 %cmake ..
 make  %{?_smp_mflags}
+popd
+mkdir clr-build32
+pushd clr-build32
+export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
+export CFLAGS="$CFLAGS -m32"
+export CXXFLAGS="$CXXFLAGS -m32"
+%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DLIB_SUFFIX=32 ..
+make  %{?_smp_mflags}
+unset PKG_CONFIG_PATH
 popd
 
 %check
@@ -93,11 +132,20 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd clr-build ; make test ||: ; popd
 
 %install
-export SOURCE_DATE_EPOCH=1533749623
+export SOURCE_DATE_EPOCH=1533750572
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/graphite
 cp COPYING %{buildroot}/usr/share/doc/graphite/COPYING
 cp LICENSE %{buildroot}/usr/share/doc/graphite/LICENSE
+pushd clr-build32
+%make_install32
+if [ -d  %{buildroot}/usr/lib32/pkgconfig ]
+then
+pushd %{buildroot}/usr/lib32/pkgconfig
+for i in *.pc ; do ln -s $i 32$i ; done
+popd
+fi
+popd
 pushd clr-build
 %make_install
 popd
@@ -123,10 +171,21 @@ popd
 /usr/lib64/libgraphite2.so
 /usr/lib64/pkgconfig/graphite2.pc
 
+%files dev32
+%defattr(-,root,root,-)
+/usr/lib32/libgraphite2.so
+/usr/lib32/pkgconfig/32graphite2.pc
+/usr/lib32/pkgconfig/graphite2.pc
+
 %files lib
 %defattr(-,root,root,-)
 /usr/lib64/libgraphite2.so.3
 /usr/lib64/libgraphite2.so.3.0.1
+
+%files lib32
+%defattr(-,root,root,-)
+/usr/lib32/libgraphite2.so.3
+/usr/lib32/libgraphite2.so.3.0.1
 
 %files license
 %defattr(-,root,root,-)
