@@ -4,12 +4,12 @@
 #
 Name     : graphite
 Version  : 1.3.11
-Release  : 1
+Release  : 2
 URL      : https://github.com/silnrsi/graphite/releases/download/1.3.11/graphite2-1.3.11.tgz
 Source0  : https://github.com/silnrsi/graphite/releases/download/1.3.11/graphite2-1.3.11.tgz
 Summary  : "Interface to SIL's Graphite2 rendering engine"
 Group    : Development/Tools
-License  : LGPL-2.1 Perl
+License  : Artistic-1.0-Perl LGPL-2.1
 Requires: graphite-bin
 Requires: graphite-lib
 Requires: graphite-license
@@ -78,7 +78,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1533749500
+export SOURCE_DATE_EPOCH=1533749623
 mkdir clr-build
 pushd clr-build
 %cmake ..
@@ -93,7 +93,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 pushd clr-build ; make test ||: ; popd
 
 %install
-export SOURCE_DATE_EPOCH=1533749500
+export SOURCE_DATE_EPOCH=1533749623
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/graphite
 cp COPYING %{buildroot}/usr/share/doc/graphite/COPYING
