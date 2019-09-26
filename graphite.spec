@@ -4,7 +4,7 @@
 #
 Name     : graphite
 Version  : 1.3.13
-Release  : 6
+Release  : 7
 URL      : https://github.com/silnrsi/graphite/releases/download/1.3.13/graphite2-1.3.13.tgz
 Source0  : https://github.com/silnrsi/graphite/releases/download/1.3.13/graphite2-1.3.13.tgz
 Summary  : "Interface to SIL's Graphite2 rendering engine"
@@ -54,6 +54,7 @@ Requires: graphite-lib = %{version}-%{release}
 Requires: graphite-bin = %{version}-%{release}
 Requires: graphite-data = %{version}-%{release}
 Provides: graphite-devel = %{version}-%{release}
+Requires: graphite = %{version}-%{release}
 
 %description dev
 dev components for the graphite package.
@@ -101,35 +102,42 @@ license components for the graphite package.
 
 %prep
 %setup -q -n graphite2-1.3.13
-pushd ..
-cp -a graphite2-1.3.13 build32
-popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1545315707
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1569521917
 mkdir -p clr-build
 pushd clr-build
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -fno-lto "
+export FCFLAGS="$CFLAGS -fno-lto "
+export FFLAGS="$CFLAGS -fno-lto "
+export CXXFLAGS="$CXXFLAGS -fno-lto "
 %cmake ..
-make  %{?_smp_mflags}
+make  %{?_smp_mflags}  VERBOSE=1
 popd
 mkdir -p clr-build32
 pushd clr-build32
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -fno-lto "
+export FCFLAGS="$CFLAGS -fno-lto "
+export FFLAGS="$CFLAGS -fno-lto "
+export CXXFLAGS="$CXXFLAGS -fno-lto "
 export PKG_CONFIG_PATH="/usr/lib32/pkgconfig"
-export ASFLAGS="$ASFLAGS --32"
-export CFLAGS="$CFLAGS -m32"
-export CXXFLAGS="$CXXFLAGS -m32"
-export LDFLAGS="$LDFLAGS -m32"
-%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DLIB_SUFFIX=32 ..
-make  %{?_smp_mflags}
+export ASFLAGS="${ASFLAGS}${ASFLAGS:+ }--32"
+export CFLAGS="${CFLAGS}${CFLAGS:+ }-m32 -mstackrealign"
+export CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-m32 -mstackrealign"
+export LDFLAGS="${LDFLAGS}${LDFLAGS:+ }-m32 -mstackrealign"
+%cmake -DLIB_INSTALL_DIR:PATH=/usr/lib32 -DCMAKE_INSTALL_LIBDIR=/usr/lib32 -DLIB_SUFFIX=32 ..
+make  %{?_smp_mflags}  VERBOSE=1
 unset PKG_CONFIG_PATH
 popd
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
@@ -138,7 +146,7 @@ cd ../clr-build32;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1545315707
+export SOURCE_DATE_EPOCH=1569521917
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/graphite
 cp COPYING %{buildroot}/usr/share/package-licenses/graphite/COPYING
