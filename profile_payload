@@ -1,0 +1,2 @@
+V=1 VERBOSE=1 make test || :
+ctest -V || :
