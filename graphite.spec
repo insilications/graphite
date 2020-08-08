@@ -5,7 +5,7 @@
 %define keepstatic 1
 Name     : graphite
 Version  : 1.3.14
-Release  : 9
+Release  : 10
 URL      : https://github.com/silnrsi/graphite/releases/download/1.3.14/graphite2-1.3.14.tgz
 Source0  : https://github.com/silnrsi/graphite/releases/download/1.3.14/graphite2-1.3.14.tgz
 Summary  : "Interface to SIL's Graphite2 rendering engine"
@@ -115,7 +115,7 @@ unset http_proxy
 unset https_proxy
 unset no_proxy
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1596892173
+export SOURCE_DATE_EPOCH=1596892418
 mkdir -p clr-build
 pushd clr-build
 export GCC_IGNORE_WERROR=1
@@ -146,7 +146,7 @@ export CXXFLAGS="${CXXFLAGS_GENERATE}"
 export FFLAGS="${FFLAGS_GENERATE}"
 export FCFLAGS="${FCFLAGS_GENERATE}"
 export LDFLAGS="${LDFLAGS_GENERATE}"
-%cmake ..   -DBUILD_SHARED_LIBS=0 -DBUILD_STATIC_LIBS=1 -DCMAKE_BUILD_TYPE=Release
+%cmake ..   -DBUILD_SHARED_LIBS=0 -DBUILD_STATIC_LIBS=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_C_FLAGS_RELEASE="-O3 -g" -DCMAKE_CXX_FLAGS_RELEASE="-O3 -g"
 make  %{?_smp_mflags}  V=1 VERBOSE=1
 
 V=1 VERBOSE=1 make test || :
@@ -157,7 +157,7 @@ export CXXFLAGS="${CXXFLAGS_USE}"
 export FFLAGS="${FFLAGS_USE}"
 export FCFLAGS="${FCFLAGS_USE}"
 export LDFLAGS="${LDFLAGS_USE}"
-%cmake ..   -DBUILD_SHARED_LIBS=0 -DBUILD_STATIC_LIBS=1 -DCMAKE_BUILD_TYPE=Release
+%cmake ..   -DBUILD_SHARED_LIBS=0 -DBUILD_STATIC_LIBS=1 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_C_FLAGS_RELEASE="-O3 -g" -DCMAKE_CXX_FLAGS_RELEASE="-O3 -g"
 make  %{?_smp_mflags}  V=1 VERBOSE=1
 popd
 mkdir -p clr-build-special
@@ -190,7 +190,7 @@ export CXXFLAGS="${CXXFLAGS_GENERATE}"
 export FFLAGS="${FFLAGS_GENERATE}"
 export FCFLAGS="${FCFLAGS_GENERATE}"
 export LDFLAGS="${LDFLAGS_GENERATE}"
-%cmake .. -DBUILD_SHARED_LIBS=1 -DBUILD_STATIC_LIBS=0 -DCMAKE_BUILD_TYPE=Release
+%cmake .. -DBUILD_SHARED_LIBS=1 -DBUILD_STATIC_LIBS=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_C_FLAGS_RELEASE="-O3 -g" -DCMAKE_CXX_FLAGS_RELEASE="-O3 -g"
 make  %{?_smp_mflags}  V=1 VERBOSE=1
 
 V=1 VERBOSE=1 make test || :
@@ -201,7 +201,7 @@ export CXXFLAGS="${CXXFLAGS_USE}"
 export FFLAGS="${FFLAGS_USE}"
 export FCFLAGS="${FCFLAGS_USE}"
 export LDFLAGS="${LDFLAGS_USE}"
-%cmake .. -DBUILD_SHARED_LIBS=1 -DBUILD_STATIC_LIBS=0 -DCMAKE_BUILD_TYPE=Release
+%cmake .. -DBUILD_SHARED_LIBS=1 -DBUILD_STATIC_LIBS=0 -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_CXX_FLAGS_RELWITHDEBINFO="-O3 -g" -DCMAKE_C_FLAGS_RELEASE="-O3 -g" -DCMAKE_CXX_FLAGS_RELEASE="-O3 -g"
 make  %{?_smp_mflags}  V=1 VERBOSE=1
 popd
 mkdir -p clr-build32
@@ -230,7 +230,7 @@ export NM=gcc-nm
 #export CCACHE_DISABLE=1
 ## altflags_pgo end
 export CFLAGS="-g -O3 -march=native -mtune=native -fuse-linker-plugin -malign-data=cacheline -pipe"
-export CFLAGS="-g -O3 -march=native -mtune=native -fuse-linker-plugin -malign-data=cacheline -fvisibility-inlines-hidden -pipe"
+export CXXFLAGS="-g -O3 -march=native -mtune=native -fuse-linker-plugin -malign-data=cacheline -fvisibility-inlines-hidden -pipe"
 export LDFLAGS="-g -O3 -march=native -mtune=native -fuse-linker-plugin -malign-data=cacheline -pipe"
 export AR=gcc-ar
 export RANLIB=gcc-ranlib
@@ -257,7 +257,7 @@ cd ../clr-build-special;
 make test || : || :
 
 %install
-export SOURCE_DATE_EPOCH=1596892173
+export SOURCE_DATE_EPOCH=1596892418
 rm -rf %{buildroot}
 pushd clr-build32
 %make_install32
