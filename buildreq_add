@@ -4,10 +4,6 @@ buildreq-cmake
 buildreq-cpan
 buildreq-distutils3
 findutils
-freetype-dev
-freetype-dev32
-freetype-staticdev
-freetype-staticdev32
 gcc-dev32
 gcc-libgcc32
 gcc-libstdc++32
